@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ZaoApp.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="开始日期" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2025-09-01</Value>
+    </Setting>
+    <Setting Name="结束日期" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2025-10-08</Value>
+    </Setting>
+    <Setting Name="时间段" Type="System.String" Scope="User">
+      <Value Profile="(Default)">13:00-13:57,13:58-13:59,14:17-14:18,14:19-16:03</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
