@@ -1,6 +1,8 @@
 ﻿using NAudio.Dsp;
 using NAudio.Wave;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -34,19 +36,27 @@ namespace ZaoApp
 			DateTime now = DateTime.Now;
 			DateTime startDate = DateTime.Parse(Properties.Settings.Default.开始日期);
 			DateTime endDate = DateTime.Parse(Properties.Settings.Default.结束日期);
-			string[] timePeriods = Properties.Settings.Default.时间段.Split(',');
-			int durationDays = (int)Math.Ceiling(endDate.Subtract(startDate).TotalDays);
+			string duan = Properties.Settings.Default.时间段;
+			List<List<string>> dayPeriods = JsonConvert.DeserializeObject<List<List<string>>>(duan);
 
-
-			for (int i = 0; i < durationDays; i++)
+			if (now > startDate && now < endDate)
 			{
-				DateTime targetTime = startDate.AddDays(i);
+				List<string> timePeriods = dayPeriods[0];
 
-				for (int j = 0; j < timePeriods.Length; j++)
+				if (dayPeriods.Count == 7)
+				{
+					int dayOfWeek = (int)now.DayOfWeek;
+
+					dayOfWeek--;
+					dayOfWeek = dayOfWeek < 0 ? 6 : dayOfWeek;
+					timePeriods = dayPeriods[dayOfWeek];
+				}
+
+				for (int j = 0; j < timePeriods.Count; j++)
 				{
 					string[] timeSplits = timePeriods[j].Split('-');
-					DateTime startTime = DateTime.Parse(targetTime.ToString("yyyy-MM-dd") + " " + timeSplits[0]);
-					DateTime endTime = DateTime.Parse(targetTime.ToString("yyyy-MM-dd") + " " + timeSplits[1]);
+					DateTime startTime = DateTime.Parse(now.ToString("yyyy-MM-dd") + " " + timeSplits[0]);
+					DateTime endTime = DateTime.Parse(now.ToString("yyyy-MM-dd") + " " + timeSplits[1]);
 
 					if (now > startTime && now < endTime)
 					{

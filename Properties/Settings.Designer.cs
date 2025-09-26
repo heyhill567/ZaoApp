@@ -25,7 +25,7 @@ namespace ZaoApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2025-09-01")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2025-09-30")]
         public string 开始日期 {
             get {
                 return ((string)(this["开始日期"]));
@@ -37,7 +37,7 @@ namespace ZaoApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2025-10-08")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2025-10-09")]
         public string 结束日期 {
             get {
                 return ((string)(this["结束日期"]));
@@ -49,7 +49,7 @@ namespace ZaoApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("13:00-13:57,13:58-13:59,14:17-14:18,14:19-16:03")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"[[""22:12-22:35"",""22:55-23:15"",""23:35-23:55"",""00:15-00:40"",""01:00-01:25"",""01:45-02:05"",""02:25-02:50"",""03:10-03:35"",""03:55-04:20"",""04:40-05:05"",""05:25-05:50"",""06:10-06:35"",""06:55-07:00""],[""22:05-22:30"",""22:50-23:10"",""23:30-23:50"",""00:10-00:35"",""00:55-01:20"",""01:40-02:05"",""02:25-02:50"",""03:10-03:35"",""03:55-04:20"",""04:40-05:05"",""05:25-05:50"",""06:10-06:35"",""06:55-07:00""],[""22:08-22:33"",""22:53-23:13"",""23:33-23:53"",""00:13-00:33"",""00:53-01:13"",""01:33-01:53"",""02:13-02:33"",""02:53-03:13"",""03:33-03:53"",""04:13-04:33"",""04:53-05:13"",""05:33-05:53"",""06:13-06:33"",""06:53-07:00""],[""22:10-22:40"",""23:00-23:20"",""23:40-00:00"",""00:20-00:40"",""01:00-01:20"",""01:40-02:00"",""02:20-02:40"",""03:00-03:20"",""03:40-04:00"",""04:20-04:40"",""05:00-05:20"",""05:40-06:00"",""06:20-06:40"",""06:59-07:00""],[""22:00-22:25"",""22:45-23:05"",""23:25-23:45"",""00:05-00:25"",""00:45-01:05"",""01:25-01:45"",""02:05-02:25"",""02:45-03:05"",""03:25-03:45"",""04:05-04:25"",""04:45-05:05"",""05:25-05:45"",""06:05-06:25"",""06:45-07:00""],[""22:15-22:40"",""23:00-23:25"",""23:45-00:05"",""00:25-00:50"",""01:10-01:35"",""01:55-02:20"",""02:40-03:05"",""03:25-03:50"",""04:10-04:35"",""04:55-05:20"",""05:40-05:65"",""06:10-06:35"",""06:55-07:00""],[""22:07-22:32"",""22:52-23:12"",""23:32-23:52"",""00:12-00:32"",""00:52-01:12"",""01:32-01:52"",""02:12-02:32"",""02:52-03:12"",""03:32-03:52"",""04:12-04:32"",""04:52-05:12"",""05:32-05:52"",""06:12-06:32"",""06:52-07:00""]]")]
         public string 时间段 {
             get {
                 return ((string)(this["时间段"]));
