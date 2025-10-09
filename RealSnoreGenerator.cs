@@ -51,8 +51,8 @@ namespace ZaoApp
             // 电锯型鼾声
             new SnoreProfile {
 				BaseFreq = 60f, FreqVariation = 0.5f, NoiseLevel = 0.5f,
-				DurationMin = 1f, DurationMax = 2.5f,
-				IntervalMin = 0.3f, IntervalMax = 1.5f,
+				DurationMin = 1f, DurationMax = 2.0f,
+				IntervalMin = 1.5f, IntervalMax = 2.5f,
 				Resonance = 0.4f
 			}
 		};

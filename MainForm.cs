@@ -1,5 +1,6 @@
 ﻿using NAudio.Dsp;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -31,13 +32,13 @@ namespace ZaoApp
 				cmbJkDevices.SelectedIndex = 0;
 		}
 
+		List<List<string>> dayPeriods;
+
 		private void OnTimerTick(object sender, EventArgs e)
 		{
 			DateTime now = DateTime.Now;
 			DateTime startDate = DateTime.Parse(Properties.Settings.Default.开始日期);
 			DateTime endDate = DateTime.Parse(Properties.Settings.Default.结束日期);
-			string duan = Properties.Settings.Default.时间段;
-			List<List<string>> dayPeriods = JsonConvert.DeserializeObject<List<List<string>>>(duan);
 
 			if (now > startDate && now < endDate)
 			{
@@ -55,8 +56,11 @@ namespace ZaoApp
 				for (int j = 0; j < timePeriods.Count; j++)
 				{
 					string[] timeSplits = timePeriods[j].Split('-');
-					DateTime startTime = DateTime.Parse(now.ToString("yyyy-MM-dd") + " " + timeSplits[0]);
-					DateTime endTime = DateTime.Parse(now.ToString("yyyy-MM-dd") + " " + timeSplits[1]);
+					DateTime startTime = DateTime.Now;
+					DateTime endTime = DateTime.Now;
+
+					DateTime.TryParse(now.ToString("yyyy-MM-dd") + " " + timeSplits[0], out startTime);
+					DateTime.TryParse(now.ToString("yyyy-MM-dd") + " " + timeSplits[1], out endTime);
 
 					if (now > startTime && now < endTime)
 					{
@@ -71,8 +75,85 @@ namespace ZaoApp
 
 		private void btnNoiseStart_Click(object sender, EventArgs e)
 		{
+			if (generator != null)
+			{
+				generator.Dispose();
+			}
+
+			if (cbmNoiseType.SelectedItem == "重度鼾声")
+			{
+				var realSnoreGenerator = new RealSnoreGenerator();
+
+				realSnoreGenerator.SetSnoreType(RealSnoreGenerator.SnoreType.Heavy);
+				generator = realSnoreGenerator;
+			}
+			else if (cbmNoiseType.SelectedItem == "电锯型鼾声")
+			{
+				var realSnoreGenerator = new RealSnoreGenerator();
+
+				realSnoreGenerator.SetSnoreType(RealSnoreGenerator.SnoreType.Chainsaw);
+				generator = realSnoreGenerator;
+
+			}
+			else
+			{
+				generator = new PureToneGenerator();
+			}
+
 			if (cbxNoiseTiming.Checked)
 			{
+				#region 加载时间点
+				if (rbPeizhi.Checked)
+				{
+					string duan = Properties.Settings.Default.时间段;
+
+					dayPeriods = JsonConvert.DeserializeObject<List<List<string>>>(duan);
+				}
+				else if (rbSuiji.Checked)
+				{
+					dayPeriods = new List<List<string>>();
+					Random random = new Random();
+
+					for (int i = 0; i < 7; i++)
+					{
+						List<string> duans = new List<string>();
+						DateTime start = DateTime.Parse($"2000-01-01 {txtPeriodStart.Text}");
+						DateTime over = DateTime.Parse($"2000-01-01 {txtPeriodEnd.Text}");
+
+						if (start > over)
+						{
+							over = over.AddDays(1);
+						}
+
+						while (start < over)
+						{
+							int pauseMinutes = random.Next(1, 61);
+							int durationMinutes = random.Next(1, 61);
+
+							start = start.AddMinutes(pauseMinutes).AddMinutes(durationMinutes);
+
+							if (start < over)
+							{
+								DateTime end = start;
+								DateTime begin = start.AddMinutes(-durationMinutes);
+
+								if (begin.Date != end.Date)
+								{
+									duans.Add($"{begin.ToString("HH:mm")}-23:59");
+									duans.Add($"00:00-{end.ToString("HH:mm")}");
+								}
+								else
+								{
+									duans.Add($"{begin.ToString("HH:mm")}-{end.ToString("HH:mm")}");
+								}
+							}
+						}
+
+						dayPeriods.Add(duans);
+					}
+				}
+				#endregion
+
 				if (timer == null)
 				{
 					timer = new System.Windows.Forms.Timer();
@@ -91,23 +172,9 @@ namespace ZaoApp
 					timer.Dispose();
 					timer = null;
 				}
-			}
 
-			if (generator != null)
-			{
-				generator.Dispose();
+				generator.Play();
 			}
-
-			if (cbmNoiseType.SelectedItem == "鼾声")
-			{
-				generator = new RealSnoreGenerator();
-			}
-			else
-			{
-				generator = new PureToneGenerator();
-			}
-
-			generator.Play();
 		}
 
 		private void btnNoiseStop_Click(object sender, EventArgs e)
@@ -326,6 +393,67 @@ namespace ZaoApp
 		{
 			StopMonitoring();
 			base.OnFormClosing(e);
+		}
+
+		/// <summary>
+		/// 报警音
+		/// GenerateSiren(800, 2000, 1000, 3);
+		/// </summary>
+		/// <param name="startFreq"></param>
+		/// <param name="endFreq"></param>
+		/// <param name="sweepDurationMs"></param>
+		/// <param name="cycles"></param>
+		protected void GenerateSiren(double startFreq, double endFreq, int sweepDurationMs, int cycles)
+		{
+			// 采样率（Hz）
+			int sampleRate = 44100;
+
+			// 创建一个 SignalGenerator（正弦波）
+			var signalGenerator = new SignalGenerator()
+			{
+				Gain = 0.5, // 音量（0.0 - 1.0）
+				Frequency = startFreq,
+				Type = SignalGeneratorType.Sin
+			};
+
+			// 使用 WaveOut 播放
+			using (var waveOut = new WaveOutEvent())
+			{
+				waveOut.Init(signalGenerator);
+				waveOut.Play();
+
+				// 循环扫频
+				for (int i = 0; i < cycles; i++)
+				{
+					// 从 startFreq 扫频到 endFreq
+					double currentTime = 0;
+					while (currentTime < sweepDurationMs / 1000.0)
+					{
+						// 线性扫频
+						double progress = currentTime / (sweepDurationMs / 1000.0);
+						double currentFreq = startFreq + (endFreq - startFreq) * progress;
+
+						signalGenerator.Frequency = currentFreq;
+						currentTime += 0.01; // 每10ms更新一次频率
+						System.Threading.Thread.Sleep(10);
+					}
+
+					// 从 endFreq 扫频回 startFreq
+					currentTime = 0;
+					while (currentTime < sweepDurationMs / 1000.0)
+					{
+						double progress = currentTime / (sweepDurationMs / 1000.0);
+						double currentFreq = endFreq - (endFreq - startFreq) * progress;
+
+						signalGenerator.Frequency = currentFreq;
+						currentTime += 0.01;
+						System.Threading.Thread.Sleep(10);
+					}
+				}
+
+				// 停止播放
+				waveOut.Stop();
+			}
 		}
 	}
 }

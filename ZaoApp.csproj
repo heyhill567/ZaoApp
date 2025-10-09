@@ -80,6 +80,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlertAlarmPlayer.cs" />
+    <Compile Include="AlertSoundPlayer.cs" />
     <Compile Include="LogFileHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
